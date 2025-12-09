@@ -1,0 +1,17 @@
+<div class="app-container">
+  <nav class="navbar" *ngIf="isLoggedIn">
+    <div class="nav-brand">
+      <h1>📊 MiBanco - ML Platform</h1>
+    </div>
+    <div class="nav-links">
+  <a routerLink="/ml-prediction" routerLinkActive="active">🧠 Predicción ML</a>
+  <a routerLink="/reporte" routerLinkActive="active">📊 Reportes</a>
+  <a routerLink="/usuarios" routerLinkActive="active">👤 Usuarios</a>
+  <button class="logout-btn" (click)="logout()">🚪 Cerrar Sesión</button>
+    </div>
+  </nav>
+  
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

@@ -1,0 +1,21 @@
+<div class="login-container">
+  <img src="assets/logo-mibanco.png" alt="Mibanco" class="logo" />
+  <h2 class="titulo-upc">PROYECTO DE INVESTIGACION I</h2>
+  <h3>Login</h3>
+  <form (ngSubmit)="onLogin()">
+    <label>
+      Usuario:
+      <input type="text" [(ngModel)]="username" name="username" required />
+    </label>
+    <br />
+    <label>
+      Contraseña:
+      <input type="password" [(ngModel)]="password" name="password" required />
+    </label>
+    <br />
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Iniciando sesión...' : 'Ingresar' }}
+    </button>
+  </form>
+  <div *ngIf="error" class="error">{{ error }}</div>
+</div>

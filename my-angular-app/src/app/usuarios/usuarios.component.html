@@ -1,0 +1,165 @@
+<div class="usuarios-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-icon">👥</div>
+      <div class="header-text">
+        <h2>Mantenimiento de Usuarios</h2>
+        <p>Gestiona los usuarios del sistema</p>
+      </div>
+    </div>
+    <div class="user-count">
+      <span class="count-number">{{ usuarios.length }}</span>
+      <span class="count-label">Usuarios</span>
+    </div>
+  </div>
+
+  <!-- Mensajes -->
+  <div *ngIf="mensaje" [class]="getMensajeClass()">
+    <span class="mensaje-icon">{{ getMensajeIcon() }}</span>
+    <span>{{ mensaje }}</span>
+  </div>
+
+  <!-- Formulario -->
+  <div class="form-card">
+    <div class="form-header">
+      <h3>
+        <span *ngIf="!editMode">➕ Nuevo Usuario</span>
+        <span *ngIf="editMode">✏️ Editar Usuario</span>
+      </h3>
+    </div>
+    
+    <form (ngSubmit)="guardarUsuario()" #formUsuario="ngForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="username">
+            <span class="label-icon">👤</span>
+            Usuario
+          </label>
+          <input 
+            type="text" 
+            id="username"
+            [(ngModel)]="usuarioForm.username" 
+            name="username" 
+            placeholder="Ingrese nombre de usuario"
+            required 
+            class="form-control" />
+        </div>
+
+        <div class="form-group">
+          <label for="email">
+            <span class="label-icon">📧</span>
+            Email
+          </label>
+          <input 
+            type="email" 
+            id="email"
+            [(ngModel)]="usuarioForm.email" 
+            name="email" 
+            placeholder="usuario@ejemplo.com"
+            required 
+            class="form-control" />
+        </div>
+
+        <div class="form-group" *ngIf="!editMode">
+          <label for="password">
+            <span class="label-icon">🔒</span>
+            Contraseña
+          </label>
+          <input 
+            type="password" 
+            id="password"
+            [(ngModel)]="usuarioForm.password" 
+            name="password" 
+            placeholder="Ingrese contraseña"
+            required 
+            class="form-control" />
+        </div>
+
+        <div class="form-group" *ngIf="editMode">
+          <label for="password">
+            <span class="label-icon">🔐</span>
+            Nueva Contraseña (opcional)
+          </label>
+          <input 
+            type="password" 
+            id="password"
+            [(ngModel)]="usuarioForm.password" 
+            name="password" 
+            placeholder="Dejar vacío para mantener la actual"
+            class="form-control" />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          <span class="btn-icon">{{ editMode ? '💾' : '➕' }}</span>
+          {{ editMode ? 'Actualizar Usuario' : 'Crear Usuario' }}
+        </button>
+        <button type="button" *ngIf="editMode" (click)="cancelarEdicion()" class="btn btn-secondary">
+          <span class="btn-icon">✖️</span>
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tabla de usuarios -->
+  <div class="table-card">
+    <div class="table-header">
+      <h3>📋 Lista de Usuarios</h3>
+      <div class="search-box">
+        <input 
+          type="text" 
+          [(ngModel)]="searchText" 
+          placeholder="🔍 Buscar usuario..."
+          class="search-input">
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="usuarios-table" *ngIf="usuarios.length > 0">
+        <thead>
+          <tr>
+            <th class="th-id">ID</th>
+            <th class="th-usuario">👤 Usuario</th>
+            <th class="th-email">📧 Email</th>
+            <th class="th-fecha">📅 Fecha Creación</th>
+            <th class="th-acciones">⚙️ Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let usuario of usuariosFiltrados()" class="table-row">
+            <td class="td-id">{{ usuario.id }}</td>
+            <td class="td-usuario">
+              <div class="user-info">
+                <div class="user-avatar">{{ usuario.username.charAt(0).toUpperCase() }}</div>
+                <span class="user-name">{{ usuario.username }}</span>
+              </div>
+            </td>
+            <td class="td-email">{{ usuario.email }}</td>
+            <td class="td-fecha">
+              <span class="fecha-badge">{{ usuario.fecha_creacion | date:'dd/MM/yyyy HH:mm' }}</span>
+            </td>
+            <td class="td-acciones">
+              <button (click)="editarUsuario(usuario)" class="btn-action btn-edit" title="Editar usuario">
+                <span class="btn-icon">✏️</span>
+                <span class="btn-text">Editar</span>
+              </button>
+              <button (click)="eliminarUsuario(usuario.id!)" class="btn-action btn-delete" title="Eliminar usuario">
+                <span class="btn-icon">🗑️</span>
+                <span class="btn-text">Eliminar</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="usuarios.length === 0" class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>No hay usuarios registrados</h3>
+        <p>Comienza creando tu primer usuario usando el formulario superior</p>
+      </div>
+    </div>
+  </div>
+</div>

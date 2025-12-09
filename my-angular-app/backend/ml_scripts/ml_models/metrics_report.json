@@ -1,0 +1,45 @@
+{
+  "accuracy": 0.79,
+  "precision": 0.0,
+  "recall": 0.0,
+  "f1_score": 0.0,
+  "roc_auc": 0.692284508740205,
+  "confusion_matrix": {
+    "true_negative": 158,
+    "false_positive": 0,
+    "false_negative": 42,
+    "true_positive": 0
+  },
+  "additional_metrics": {
+    "specificity": 1.0,
+    "sensitivity": 0.0,
+    "false_positive_rate": 0.0,
+    "false_negative_rate": 1.0
+  },
+  "classification_report": {
+    "0": {
+      "precision": 0.79,
+      "recall": 1.0,
+      "f1-score": 0.8826815642458101
+    },
+    "1": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0
+    }
+  },
+  "training_time": 0.11758589744567871,
+  "data_size": 1000,
+  "test_size": 200,
+  "feature_importance": {
+    "edad": 0.10478058457374573,
+    "sexo": 0.07928348332643509,
+    "estado_civil": 0.0836687982082367,
+    "nacionalidad": 0.11927545070648193,
+    "nivel_educativo": 0.09574324637651443,
+    "ingresos_mensuales": 0.12758219242095947,
+    "ocupacion": 0.06769482046365738,
+    "nivel_riesgo_crediticio": 0.20389652252197266,
+    "tarjeta_credito": 0.1180749163031578
+  }
+}

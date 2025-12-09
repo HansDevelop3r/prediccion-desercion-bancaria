@@ -1,0 +1,189 @@
+<div class="reporte-container">
+  <div class="header">
+    <h2>📊 Reportes</h2>
+    <p>Genera reportes de predicciones y archivos en formato Excel o PDF</p>
+  </div>
+
+  <!-- Mensajes -->
+  <div *ngIf="error" class="error-message">
+    ❌ {{ error }}
+  </div>
+  
+  <div *ngIf="success" class="success-message">
+    ✅ {{ success }}
+  </div>
+
+  <!-- Mostrar filtro aplicado -->
+  <div *ngIf="fechaInicio || fechaFin" class="info-message">
+    📅 Filtro aplicado: 
+    <strong *ngIf="fechaInicio && fechaFin">{{ fechaInicio }} al {{ fechaFin }}</strong>
+    <strong *ngIf="fechaInicio && !fechaFin">Desde {{ fechaInicio }}</strong>
+    <strong *ngIf="!fechaInicio && fechaFin">Hasta {{ fechaFin }}</strong>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filtros-section">
+    <h3>📅 Filtros de Fecha</h3>
+    <div class="filtros-form">
+      <div class="form-group">
+        <label for="fechaInicio">📅 Fecha Inicio:</label>
+        <input 
+          type="date" 
+          id="fechaInicio" 
+          name="fechaInicio"
+          [(ngModel)]="fechaInicio"
+          class="form-control"
+          placeholder="Seleccione fecha">
+      </div>
+      
+      <div class="form-group">
+        <label for="fechaFin">📅 Fecha Fin:</label>
+        <input 
+          type="date" 
+          id="fechaFin"
+          name="fechaFin" 
+          [(ngModel)]="fechaFin"
+          class="form-control"
+          placeholder="Seleccione fecha">
+      </div>
+      
+      <div class="form-actions">
+        <button (click)="filtrar()" class="btn btn-primary" [disabled]="loading">
+          🔍 Filtrar
+        </button>
+        <button (click)="limpiarFiltros()" class="btn btn-secondary" [disabled]="loading">
+          🔄 Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botones de exportación -->
+  <div class="export-section">
+    <h3>Exportar Datos</h3>
+    <p class="export-description">
+      Descarga los datos filtrados en el formato que prefieras
+    </p>
+    <div class="export-buttons">
+      <button 
+        (click)="exportarExcel()" 
+        class="btn btn-success"
+        [disabled]="loading || (predicciones.length === 0 && archivos.length === 0)">
+        <span class="btn-icon">📊</span>
+        Exportar a Excel
+      </button>
+      
+      <button 
+        (click)="exportarPDF()" 
+        class="btn btn-danger"
+        [disabled]="loading || (predicciones.length === 0 && archivos.length === 0)">
+        <span class="btn-icon">📄</span>
+        Exportar a PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- Mensaje de carga -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Cargando datos...</p>
+  </div>
+
+  <!-- Resumen de datos -->
+  <div *ngIf="!loading" class="resumen-section">
+    <h3>Resumen de Datos</h3>
+    <div class="resumen-cards">
+      <div class="card">
+        <div class="card-icon">🔮</div>
+        <h4>Predicciones</h4>
+        <p class="numero">{{ predicciones.length }}</p>
+        <p class="subtitulo">registros encontrados</p>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon">📁</div>
+        <h4>Archivos</h4>
+        <p class="numero">{{ archivos.length }}</p>
+        <p class="subtitulo">archivos cargados</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista previa de predicciones -->
+  <div *ngIf="predicciones.length > 0" class="preview-section">
+    <h3>Vista Previa - Predicciones (últimas 10)</h3>
+    <div class="table-responsive">
+      <table class="preview-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Cliente ID</th>
+            <th>Edad</th>
+            <th>Ingresos</th>
+            <th>Riesgo</th>
+            <th>Predicción</th>
+            <th>Probabilidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let pred of predicciones.slice(0, 10)">
+            <td>{{ formatDate(pred.fecha_prediccion) }}</td>
+            <td>{{ pred.datos_cliente?.ClienteID || 'N/A' }}</td>
+            <td>{{ pred.datos_cliente?.edad || '-' }}</td>
+            <td>{{ pred.datos_cliente?.ingresos_mensuales | currency:'PEN' }}</td>
+            <td>{{ pred.datos_cliente?.nivel_riesgo_crediticio || '-' }}</td>
+            <td>
+              <span [class]="pred.prediccion === 1 ? 'badge badge-danger' : 'badge badge-success'">
+                {{ pred.prediccion === 1 ? 'Sí' : 'No' }}
+              </span>
+            </td>
+            <td>{{ (pred.probabilidad * 100).toFixed(2) }}%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-footer" *ngIf="predicciones.length > 10">
+      Mostrando 10 de {{ predicciones.length }} registros
+    </p>
+  </div>
+
+  <!-- Vista previa de archivos -->
+  <div *ngIf="archivos.length > 0" class="preview-section">
+    <h3>Vista Previa - Archivos (últimos 10)</h3>
+    <div class="table-responsive">
+      <table class="preview-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Usuario</th>
+            <th>Tipo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let arch of archivos.slice(0, 10)">
+            <td>{{ formatDate(arch.fecha_carga) }}</td>
+            <td class="file-name">{{ arch.nombre }}</td>
+            <td>{{ arch.descripcion || 'Sin descripción' }}</td>
+            <td>{{ arch.usuario || '-' }}</td>
+            <td>{{ arch.tipo_archivo || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-footer" *ngIf="archivos.length > 10">
+      Mostrando 10 de {{ archivos.length }} registros
+    </p>
+  </div>
+
+  <!-- Mensaje si no hay datos -->
+  <div *ngIf="!loading && predicciones.length === 0 && archivos.length === 0" class="no-data">
+    <div class="no-data-icon">📊</div>
+    <h3>No hay datos disponibles</h3>
+    <p>No se encontraron predicciones ni archivos con los filtros aplicados</p>
+    <button (click)="limpiarFiltros()" class="btn btn-primary">
+      Ver todos los datos
+    </button>
+  </div>
+</div>

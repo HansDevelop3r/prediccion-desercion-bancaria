@@ -1,0 +1,19 @@
+{
+  "accuracy": 0.85,
+  "training_time": 0.98,
+  "data_size": 1000,
+  "feature_importance": {
+    "edad": 0.15,
+    "sexo": 0.1,
+    "estado_civil": 0.12,
+    "nacionalidad": 0.08,
+    "nivel_educativo": 0.18,
+    "ingresos_mensuales": 0.25,
+    "ocupacion": 0.12,
+    "nivel_riesgo_crediticio": 0.2,
+    "tarjeta_credito": 0.08
+  },
+  "training_date": "2025-12-09T01:07:13.234Z",
+  "csv_file": "clientes_fuga_test_con_fuga1k.csv",
+  "trained_by": "admin"
+}

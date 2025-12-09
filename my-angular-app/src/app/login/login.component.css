@@ -1,0 +1,92 @@
+/* src\app\login\login.component.css */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  padding: 40px 32px;
+  max-width: 350px;
+  margin: 60px auto;
+}
+
+.logo {
+  width: 120px;
+  margin-bottom: 24px;
+}
+
+h2 {
+  color: #00953b; /* Verde Mibanco */
+  margin-bottom: 24px;
+}
+
+label {
+  color: #00953b;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 18px;
+  border: 1px solid #f9b233; /* Amarillo Mibanco */
+  border-radius: 4px;
+  outline: none;
+}
+
+button {
+  background: #00953b;
+  color: #fff;
+  border: none;
+  padding: 10px 0;
+  width: 100%;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #007a2f;
+}
+
+.error {
+  color: #d32f2f;
+  margin-top: 10px;
+}
+
+.login-upc-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  margin-bottom: -40px;
+}
+
+.logo-upc {
+  width: 80px;
+  margin: 20px 30px 0 0;
+}
+
+.titulo-upc {
+  color: #b41c18; /* Rojo UPC */
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  text-align: center;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.login-container h3 {
+  color: #555; /* Gris oscuro */
+  text-align: center;
+  margin-bottom: 18px;
+  font-weight: normal;
+}

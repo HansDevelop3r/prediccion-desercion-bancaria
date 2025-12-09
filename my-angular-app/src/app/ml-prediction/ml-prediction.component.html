@@ -1,0 +1,465 @@
+<div class="ml-prediction-container">
+  <div class="header">
+    <h2>🧠 Predicción de Deserción de Clientes</h2>
+    <p>Utiliza XGBoost para predecir la probabilidad de deserción de clientes bancarios</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'predict'"
+      (click)="setActiveTab('predict')">
+      🔮 Predicción
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'train'"
+      (click)="setActiveTab('train')">
+      🏋️ Entrenamiento
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'history'"
+      (click)="setActiveTab('history')">
+      📊 Historial
+    </button>
+  </div>
+
+  <!-- Mensajes -->
+  <div class="messages">
+    <div *ngIf="errorMessage" class="error-message">
+      ❌ {{ errorMessage }}
+    </div>
+    <div *ngIf="successMessage" class="success-message">
+      ✅ {{ successMessage }}
+    </div>
+  </div>
+
+  <!-- Estado del modelo -->
+  <div *ngIf="modelStatus" class="model-status">
+    <div class="status-item">
+      <span class="status-label">Estado del modelo:</span>
+      <span [class]="modelStatus.model_trained ? 'status-trained' : 'status-untrained'">
+        {{ modelStatus.model_trained ? '✅ Entrenado' : '❌ No entrenado' }}
+      </span>
+    </div>
+    <div *ngIf="modelStatus.model_stats" class="status-item">
+      <span class="status-label">Precisión:</span>
+      <span class="status-value">{{ (modelStatus.model_stats.accuracy * 100).toFixed(1) }}%</span>
+    </div>
+    <div *ngIf="modelStatus.model_stats" class="status-item">
+      <span class="status-label">Último entrenamiento:</span>
+      <span class="status-value">{{ formatDate(modelStatus.model_stats.training_date) }}</span>
+    </div>
+  </div>
+
+  <!-- Tab de Predicción -->
+  <div *ngIf="activeTab === 'predict'" class="tab-content">
+    <div class="prediction-section">
+      <h3>Datos del Cliente</h3>
+      
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="loadSampleData()">
+          📝 Cargar Datos de Ejemplo
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="clearForm()">
+          🗑️ Limpiar Formulario
+        </button>
+      </div>
+
+      <form class="customer-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>ID Cliente:</label>
+            <input 
+              type="text" 
+              [(ngModel)]="customerData.ClienteID" 
+              (ngModelChange)="onFieldChange()" 
+              name="clienteId"
+              placeholder="CLI001">
+          </div>
+          <div class="form-group">
+            <label>Edad:</label>
+            <input 
+              type="number" 
+              [(ngModel)]="customerData.edad" 
+              (ngModelChange)="onFieldChange()"
+              name="edad"
+              min="18" 
+              max="100">
+          </div>
+          <div class="form-group">
+            <label>Sexo:</label>
+            <select [(ngModel)]="customerData.sexo" (ngModelChange)="onFieldChange()" name="sexo">
+              <option value="">Seleccionar...</option>
+              <option *ngFor="let option of sexOptions" [value]="option">
+                {{ option === 'M' ? 'Masculino' : 'Femenino' }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Estado Civil:</label>
+            <select [(ngModel)]="customerData.estado_civil" (ngModelChange)="onFieldChange()" name="estadoCivil">
+              <option value="">Seleccionar...</option>
+              <option *ngFor="let option of estadoCivilOptions" [value]="option">
+                {{ option | titlecase }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Nacionalidad:</label>
+            <select [(ngModel)]="customerData.nacionalidad" (ngModelChange)="onFieldChange()" name="nacionalidad">
+              <option value="">Seleccionar...</option>
+              <option *ngFor="let option of nacionalidadOptions" [value]="option">
+                {{ option | titlecase }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Nivel Educativo:</label>
+            <select [(ngModel)]="customerData.nivel_educativo" (ngModelChange)="onFieldChange()" name="nivelEducativo">
+              <option value="">Seleccionar...</option>
+              <option *ngFor="let option of nivelEducativoOptions" [value]="option">
+                {{ option | titlecase }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Ingresos Mensuales:</label>
+            <input 
+              type="number" 
+              [(ngModel)]="customerData.ingresos_mensuales" 
+              (ngModelChange)="onFieldChange()" 
+              name="ingresosMensuales"
+              placeholder="3500">
+          </div>
+          <div class="form-group">
+            <label>Ocupación:</label>
+            <select [(ngModel)]="customerData.ocupacion" (ngModelChange)="onFieldChange()" name="ocupacion">
+              <option value="">Seleccionar...</option>
+              <option *ngFor="let option of ocupacionOptions" [value]="option">
+                {{ option | titlecase }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Riesgo Crediticio:</label>
+            <select [(ngModel)]="customerData.nivel_riesgo_crediticio" (ngModelChange)="onFieldChange()" name="riesgoCrediticio">
+              <option value="">Seleccionar...</option>
+              <option *ngFor="let option of riesgoCrediticioOptions" [value]="option">
+                {{ option | titlecase }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tarjeta de Crédito:</label>
+            <select [(ngModel)]="customerData.tarjeta_credito" (ngModelChange)="onFieldChange()" name="tarjetaCredito">
+              <option value="">Seleccionar...</option>
+              <option *ngFor="let option of tarjetaCreditoOptions" [value]="option">
+                {{ option | titlecase }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button 
+            type="button" 
+            class="btn btn-primary" 
+            (click)="predictChurn()"
+            [disabled]="loading || !modelStatus?.model_trained || !isFormValid">
+            <span *ngIf="loading">⏳ Prediciendo...</span>
+            <span *ngIf="!loading && !isFormValid">📝 Complete todos los campos</span>
+            <span *ngIf="!loading && isFormValid">🔮 Realizar Predicción</span>
+          </button>
+          
+          <!-- Mensaje de validación -->
+          <div *ngIf="!isFormValid && validationErrors.length > 0" class="validation-message">
+            <div class="alert alert-warning">
+              <h6>⚠️ Campos faltantes o incorrectos:</h6>
+              <ul>
+                <li *ngFor="let error of validationErrors">{{ error }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- Resultado de la predicción -->
+      <div *ngIf="predictionResult" class="prediction-result">
+        <h3>Resultado de la Predicción</h3>
+        <div class="result-card">
+          <div class="result-item">
+            <span class="result-label">Cliente ID:</span>
+            <span class="result-value">{{ predictionResult.cliente_id }}</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Deserción Predicha:</span>
+            <span [class]="getPredictionClass(predictionResult.desercion_predicha)">
+              {{ getPredictionText(predictionResult.desercion_predicha) }}
+            </span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Probabilidad:</span>
+            <span class="result-value">{{ formatProbability(predictionResult.probabilidad_desercion) }}</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Confianza:</span>
+            <span class="result-value">{{ formatProbability(predictionResult.confianza) }}</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Tasa de Efectividad:</span>
+            <span class="result-value effectiveness-rate">{{ formatProbability(predictionResult.tasa_efectividad) }}</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Nivel de Riesgo:</span>
+            <span class="risk-badge" 
+                  [style.background-color]="getRiskColor(predictionResult.riesgo || '')"
+                  [title]="getRiskDescription(predictionResult.riesgo || '')">
+              {{ predictionResult.riesgo || 'No definido' }}
+            </span>
+          </div>
+          <div *ngIf="predictionResult.riesgo_original && predictionResult.riesgo_original !== predictionResult.riesgo" class="result-item">
+            <span class="result-label">Riesgo Original:</span>
+            <span class="risk-badge" [style.background-color]="getRiskColor(predictionResult.riesgo_original || '')">
+              {{ predictionResult.riesgo_original || 'No definido' }}
+            </span>
+          </div>
+          <div *ngIf="predictionResult.riesgo_detalle" class="result-item">
+            <span class="result-label">Puntuación de Riesgo:</span>
+            <span class="result-value">{{ predictionResult.riesgo_detalle.puntuacion_total }}/10</span>
+          </div>
+        </div>
+        
+        <!-- Factores de riesgo detallados -->
+        <div *ngIf="predictionResult.factores_riesgo && predictionResult.factores_riesgo.length > 0" class="risk-factors">
+          <h4>🔍 Factores de Riesgo Analizados</h4>
+          <div class="factors-list">
+            <div *ngFor="let factor of predictionResult.factores_riesgo" class="factor-item">
+              <span class="factor-icon">•</span>
+              <span class="factor-text">{{ factor }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recomendaciones Personalizadas -->
+        <div class="recommendations-section">
+          <h4>💡 Recomendaciones Personalizadas para el Cliente</h4>
+          <div class="recommendations-card">
+            <div *ngFor="let recomendacion of generarRecomendaciones(predictionResult, customerData); let i = index" 
+                 class="recommendation-item"
+                 [class.priority-high]="recomendacion.includes('🚨') || recomendacion.includes('🔴')"
+                 [class.priority-medium]="recomendacion.includes('⚠️') || recomendacion.includes('🟡')"
+                 [class.priority-low]="recomendacion.includes('✅') || recomendacion.includes('🟢')">
+              <span class="recommendation-number">{{ i + 1 }}</span>
+              <span class="recommendation-text" [innerHTML]="recomendacion"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Plan de Mejora -->
+        <div class="improvement-plan-section">
+          <h4>📈 Plan de Mejora Sugerido</h4>
+          <div class="improvement-plan-card">
+            <div *ngFor="let paso of generarPlanMejora(predictionResult, customerData)" class="plan-step">
+              <span class="plan-text" [innerHTML]="paso"></span>
+            </div>
+          </div>
+          <div class="action-buttons">
+            <button type="button" class="btn btn-export" (click)="exportarRecomendacionesPDF()">
+              📄 Exportar Recomendaciones (PDF)
+            </button>
+            <button type="button" class="btn btn-export" (click)="exportarRecomendacionesEmail()">
+              📧 Enviar por Email
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab de Entrenamiento -->
+  <div *ngIf="activeTab === 'train'" class="tab-content">
+    <div class="training-section">
+      <h3>Entrenar Modelo XGBoost</h3>
+      <p>Sube un archivo CSV con datos de clientes para entrenar el modelo de predicción de deserción.</p>
+      
+      <div class="csv-requirements">
+        <h4>Formato requerido del CSV:</h4>
+        <p>El archivo debe contener las siguientes columnas:</p>
+        <ul>
+          <li>ClienteID</li>
+          <li>edad</li>
+          <li>sexo</li>
+          <li>estado_civil</li>
+          <li>nacionalidad</li>
+          <li>nivel_educativo</li>
+          <li>ingresos_mensuales</li>
+          <li>ocupacion</li>
+          <li>nivel_riesgo_crediticio</li>
+          <li>tarjeta_credito</li>
+        </ul>
+      </div>
+
+      <div class="file-upload">
+        <input 
+          type="file" 
+          id="csvFile"
+          accept=".csv"
+          (change)="onFileSelected($event)">
+        <label for="csvFile" class="file-label">
+          📁 Seleccionar archivo CSV
+        </label>
+        <div *ngIf="selectedFile" class="file-info">
+          Archivo seleccionado: <strong>{{ selectedFile.name }}</strong>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn btn-primary" 
+          (click)="trainModel()"
+          [disabled]="loading || !selectedFile">
+          <span *ngIf="loading">⏳ Entrenando...</span>
+          <span *ngIf="!loading">🏋️ Entrenar Modelo</span>
+        </button>
+      </div>
+
+      <!-- Resultado del entrenamiento -->
+      <div *ngIf="trainingResult" class="training-result">
+        <h3>Resultado del Entrenamiento</h3>
+        <div class="result-card">
+          <div class="result-item">
+            <span class="result-label">Precisión del Modelo:</span>
+            <span class="result-value">{{ (trainingResult.accuracy * 100).toFixed(1) }}%</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Fecha de Entrenamiento:</span>
+            <span class="result-value">{{ formatDate(trainingResult.training_date) }}</span>
+          </div>
+        </div>
+        
+        <div class="feature-importance">
+          <h4>Importancia de Características</h4>
+          <div *ngIf="trainingResult.feature_importance && getObjectKeys(trainingResult.feature_importance).length > 0" class="importance-list">
+            <div *ngFor="let item of trainingResult.feature_importance | keyvalue" class="importance-item">
+              <span class="feature-name">{{ formatFeatureName(item.key) }}:</span>
+              <span class="importance-value">{{ (item.value * 100).toFixed(1) }}%</span>
+            </div>
+          </div>
+          <div *ngIf="!trainingResult.feature_importance || getObjectKeys(trainingResult.feature_importance).length === 0" class="no-data-message">
+            <p>⚠️ No se encontraron datos de importancia de características</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab de Historial -->
+  <div *ngIf="activeTab === 'history'" class="tab-content">
+    <div class="history-section">
+      <div class="history-header">
+        <h3>Historial de Predicciones y Archivos</h3>
+        <button class="refresh-button" (click)="refreshHistory()" [disabled]="loading">
+          <span *ngIf="!loading">🔄 Actualizar</span>
+          <span *ngIf="loading">⏳ Cargando...</span>
+        </button>
+      </div>
+      
+      <!-- Subtabs para historial -->
+      <div class="history-tabs">
+        <button 
+          class="history-tab-button" 
+          [class.active]="activeHistoryTab === 'predictions'"
+          (click)="activeHistoryTab = 'predictions'">
+          🔮 Predicciones
+        </button>
+        <button 
+          class="history-tab-button" 
+          [class.active]="activeHistoryTab === 'files'"
+          (click)="activeHistoryTab = 'files'">
+          📁 Archivos Cargados
+        </button>
+      </div>
+
+      <!-- Historial de Predicciones -->
+      <div *ngIf="activeHistoryTab === 'predictions'">
+        <div *ngIf="predictionHistory.length === 0" class="no-history">
+          <p>No hay predicciones realizadas aún.</p>
+        </div>
+
+        <div *ngIf="predictionHistory.length > 0" class="history-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Cliente ID</th>
+                <th>Edad</th>
+                <th>Ingresos</th>
+                <th>Riesgo Crediticio</th>
+                <th>Predicción</th>
+                <th>Probabilidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let prediction of predictionHistory">
+                <td>{{ formatDate(prediction.fecha_prediccion) }}</td>
+                <td>{{ prediction.datos_cliente.ClienteID || 'N/A' }}</td>
+                <td>{{ prediction.datos_cliente.edad }}</td>
+                <td>{{ prediction.datos_cliente.ingresos_mensuales | currency:'PEN' }}</td>
+                <td>{{ prediction.datos_cliente.nivel_riesgo_crediticio | titlecase }}</td>
+                <td [class]="getPredictionClass(prediction.prediccion)">
+                  {{ getPredictionText(prediction.prediccion) }}
+                </td>
+                <td>{{ formatProbability(prediction.probabilidad) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Historial de Archivos -->
+      <div *ngIf="activeHistoryTab === 'files'">
+        <div *ngIf="fileHistory.length === 0" class="no-history">
+          <p>No hay archivos cargados aún.</p>
+        </div>
+
+        <div *ngIf="fileHistory.length > 0" class="history-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha/Hora</th>
+                <th>Nombre del Archivo</th>
+                <th>Descripción</th>
+                <th>Usuario</th>
+                <th>Tamaño</th>
+                <th>Tipo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let file of fileHistory">
+                <td>{{ formatDate(file.fecha_carga) }}</td>
+                <td class="file-name">{{ file.nombre }}</td>
+                <td>{{ file.descripcion || 'Sin descripción' }}</td>
+                <td class="user-name">{{ file.usuario }}</td>
+                <td>{{ formatFileSize(file.tamano) }}</td>
+                <td>{{ file.tipo_archivo }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
