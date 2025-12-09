@@ -1021,6 +1021,84 @@ app.post('/api/ml/predict', verifyToken, async (req, res) => {
   }
 });
 
+// Analizar dataset CSV y generar métricas
+app.post('/api/ml/analyze-dataset', verifyToken, upload.single('csvFile'), async (req, res) => {
+  try {
+    console.log('📊 [ANALYZE] Analizando dataset...');
+    
+    if (!req.file) {
+      return res.status(400).json({ message: 'No se proporcionó archivo CSV' });
+    }
+
+    const { spawn } = require('child_process');
+    const pythonScript = path.join(__dirname, 'ml_scripts', 'analyze_dataset.py');
+    const absoluteCsvPath = path.resolve(req.file.path);
+
+    console.log('🐍 [PYTHON] Analizando:', absoluteCsvPath);
+
+    const pythonProcess = spawn('python', [pythonScript, absoluteCsvPath]);
+
+    let pythonOutput = '';
+    let pythonError = '';
+    let jsonOutput = '';
+    let capturing = false;
+
+    pythonProcess.stdout.on('data', (data) => {
+      const output = data.toString();
+      pythonOutput += output;
+      
+      // Capturar JSON de salida
+      if (output.includes('[JSON_OUTPUT]')) {
+        capturing = true;
+      } else if (capturing) {
+        jsonOutput += output;
+      }
+      
+      console.log('🐍 [ANALYZE OUTPUT]:', output.trim());
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+      pythonError += data.toString();
+    });
+
+    pythonProcess.on('close', async (code) => {
+      if (code !== 0) {
+        console.error('❌ [ERROR] Análisis falló:', pythonError);
+        return res.status(500).json({ 
+          message: 'Error al analizar dataset',
+          error: pythonError
+        });
+      }
+
+      try {
+        // Parsear JSON de salida
+        const metrics = JSON.parse(jsonOutput);
+        
+        console.log('✅ [ANALYZE] Dataset analizado exitosamente');
+        res.json({
+          message: 'Dataset analizado exitosamente',
+          metrics: metrics,
+          archivo: req.file.originalname
+        });
+
+      } catch (parseError) {
+        console.error('❌ [ERROR] Error parseando resultados:', parseError);
+        res.status(500).json({ 
+          message: 'Error al procesar resultados del análisis',
+          error: parseError.message 
+        });
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ [ERROR] Error en análisis de dataset:', error);
+    res.status(500).json({ 
+      message: 'Error al analizar dataset',
+      error: error.message 
+    });
+  }
+});
+
 // Obtener estado del modelo
 app.get('/api/ml/model/status', verifyToken, async (req, res) => {
   try {

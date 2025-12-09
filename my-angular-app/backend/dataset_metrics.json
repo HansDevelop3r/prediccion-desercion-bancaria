@@ -1,0 +1,378 @@
+{
+  "resumen_general": {
+    "total_registros": 10000,
+    "clientes_con_fuga": 1392,
+    "clientes_sin_fuga": 8608,
+    "porcentaje_fuga": 13.919999999999998,
+    "columna_fuga_detectada": "fuga"
+  },
+  "analisis_demografico": {
+    "edad": {
+      "promedio": 48.7436,
+      "mediana": 49.0,
+      "minimo": 18,
+      "maximo": 79,
+      "desviacion_std": 17.841157185815412
+    },
+    "ingresos_mensuales": {
+      "promedio": 10221.2982,
+      "mediana": 10183.0,
+      "minimo": 501.0,
+      "maximo": 19999.0,
+      "desviacion_std": 5622.45930560116
+    }
+  },
+  "analisis_categorico": {
+    "sexo": {
+      "distribucion": {
+        "F": 5055,
+        "M": 4945
+      },
+      "categorias_unicas": 2,
+      "tasa_fuga_por_categoria": {
+        "M": {
+          "total": 4945,
+          "con_fuga": 670,
+          "tasa_fuga": 13.549039433771487
+        },
+        "F": {
+          "total": 5055,
+          "con_fuga": 722,
+          "tasa_fuga": 14.282888229475766
+        }
+      }
+    },
+    "estado_civil": {
+      "distribucion": {
+        "C": 2571,
+        "D": 2484,
+        "V": 2481,
+        "S": 2464
+      },
+      "categorias_unicas": 4,
+      "tasa_fuga_por_categoria": {
+        "D": {
+          "total": 2484,
+          "con_fuga": 342,
+          "tasa_fuga": 13.768115942028986
+        },
+        "V": {
+          "total": 2481,
+          "con_fuga": 359,
+          "tasa_fuga": 14.469971785570335
+        },
+        "S": {
+          "total": 2464,
+          "con_fuga": 346,
+          "tasa_fuga": 14.042207792207792
+        },
+        "C": {
+          "total": 2571,
+          "con_fuga": 345,
+          "tasa_fuga": 13.418903150525088
+        }
+      }
+    },
+    "nacionalidad": {
+      "distribucion": {
+        "VE": 2077,
+        "PE": 2026,
+        "UR": 1974,
+        "CO": 1963,
+        "AR": 1960
+      },
+      "categorias_unicas": 5,
+      "tasa_fuga_por_categoria": {
+        "CO": {
+          "total": 1963,
+          "con_fuga": 243,
+          "tasa_fuga": 12.379011716760061
+        },
+        "VE": {
+          "total": 2077,
+          "con_fuga": 293,
+          "tasa_fuga": 14.106884930187771
+        },
+        "UR": {
+          "total": 1974,
+          "con_fuga": 278,
+          "tasa_fuga": 14.083080040526848
+        },
+        "PE": {
+          "total": 2026,
+          "con_fuga": 281,
+          "tasa_fuga": 13.86969397828233
+        },
+        "AR": {
+          "total": 1960,
+          "con_fuga": 297,
+          "tasa_fuga": 15.153061224489797
+        }
+      }
+    },
+    "nivel_educativo": {
+      "distribucion": {
+        "TEC": 3361,
+        "NIN": 3342,
+        "UNI": 3297
+      },
+      "categorias_unicas": 3,
+      "tasa_fuga_por_categoria": {
+        "UNI": {
+          "total": 3297,
+          "con_fuga": 448,
+          "tasa_fuga": 13.588110403397028
+        },
+        "TEC": {
+          "total": 3361,
+          "con_fuga": 460,
+          "tasa_fuga": 13.686402856292771
+        },
+        "NIN": {
+          "total": 3342,
+          "con_fuga": 484,
+          "tasa_fuga": 14.482345900658288
+        }
+      }
+    },
+    "ocupacion": {
+      "distribucion": {
+        "EMP": 8521,
+        "DESEMP": 1479
+      },
+      "categorias_unicas": 2,
+      "tasa_fuga_por_categoria": {
+        "EMP": {
+          "total": 8521,
+          "con_fuga": 1191,
+          "tasa_fuga": 13.977232719164418
+        },
+        "DESEMP": {
+          "total": 1479,
+          "con_fuga": 201,
+          "tasa_fuga": 13.590263691683571
+        }
+      }
+    },
+    "nivel_riesgo_crediticio": {
+      "distribucion": {
+        "RM": 5016,
+        "RB": 2004,
+        "RA": 1959,
+        "RMB": 1021
+      },
+      "categorias_unicas": 4,
+      "tasa_fuga_por_categoria": {
+        "RB": {
+          "total": 2004,
+          "con_fuga": 191,
+          "tasa_fuga": 9.530938123752495
+        },
+        "RMB": {
+          "total": 1021,
+          "con_fuga": 89,
+          "tasa_fuga": 8.71694417238002
+        },
+        "RM": {
+          "total": 5016,
+          "con_fuga": 1021,
+          "tasa_fuga": 20.354864433811805
+        },
+        "RA": {
+          "total": 1959,
+          "con_fuga": 91,
+          "tasa_fuga": 4.645227156712608
+        }
+      }
+    },
+    "tarjeta_credito": {
+      "distribucion": {
+        "S": 5960,
+        "N": 4040
+      },
+      "categorias_unicas": 2,
+      "tasa_fuga_por_categoria": {
+        "N": {
+          "total": 4040,
+          "con_fuga": 564,
+          "tasa_fuga": 13.960396039603962
+        },
+        "S": {
+          "total": 5960,
+          "con_fuga": 828,
+          "tasa_fuga": 13.89261744966443
+        }
+      }
+    }
+  },
+  "calidad_datos": {
+    "registros_completos": 10000,
+    "registros_con_nulos": 0,
+    "columnas_totales": 11,
+    "valores_nulos_por_columna": {}
+  },
+  "segmentacion": {
+    "por_edad": {
+      "18-25": {
+        "total": 1289,
+        "con_fuga": 181,
+        "tasa_fuga": 14.04189294026377
+      },
+      "26-35": {
+        "total": 1540,
+        "con_fuga": 216,
+        "tasa_fuga": 14.025974025974024
+      },
+      "36-45": {
+        "total": 1633,
+        "con_fuga": 221,
+        "tasa_fuga": 13.533374157991426
+      },
+      "46-55": {
+        "total": 1613,
+        "con_fuga": 231,
+        "tasa_fuga": 14.321140731556106
+      },
+      "56-65": {
+        "total": 1619,
+        "con_fuga": 230,
+        "tasa_fuga": 14.206300185299567
+      },
+      "65+": {
+        "total": 2306,
+        "con_fuga": 313,
+        "tasa_fuga": 13.573287077189939
+      }
+    },
+    "por_ingresos": {
+      "Bajo": {
+        "total": 730,
+        "con_fuga": 180,
+        "tasa_fuga": 24.65753424657534
+      },
+      "Medio-Bajo": {
+        "total": 1593,
+        "con_fuga": 248,
+        "tasa_fuga": 15.56811048336472
+      },
+      "Medio": {
+        "total": 2583,
+        "con_fuga": 321,
+        "tasa_fuga": 12.427409988385598
+      },
+      "Medio-Alto": {
+        "total": 5094,
+        "con_fuga": 643,
+        "tasa_fuga": 12.622693364742835
+      }
+    }
+  },
+  "metadata": {
+    "fecha_analisis": "2025-12-09T01:32:58.724541",
+    "columnas_disponibles": [
+      "ClienteID",
+      "edad",
+      "sexo",
+      "estado_civil",
+      "nacionalidad",
+      "nivel_educativo",
+      "ingresos_mensuales",
+      "ocupacion",
+      "nivel_riesgo_crediticio",
+      "tarjeta_credito",
+      "fuga",
+      "edad_grupo",
+      "ingreso_grupo"
+    ]
+  },
+  "metricas_ml": {
+    "metricas_principales": {
+      "accuracy": 0.862,
+      "precision": 0.6,
+      "recall": 0.02158273381294964,
+      "f1_score": 0.04166666666666667,
+      "roc_auc": 0.6911864236833529
+    },
+    "matriz_confusion": {
+      "true_negative": 1718,
+      "false_positive": 4,
+      "false_negative": 272,
+      "true_positive": 6,
+      "visual": {
+        "predicho_no_fuga": {
+          "real_no_fuga": 1718,
+          "real_fuga": 272
+        },
+        "predicho_fuga": {
+          "real_no_fuga": 4,
+          "real_fuga": 6
+        }
+      }
+    },
+    "metricas_avanzadas": {
+      "specificity": 0.9976771196283392,
+      "sensitivity": 0.02158273381294964,
+      "false_positive_rate": 0.0023228803716608595,
+      "false_negative_rate": 0.9784172661870504,
+      "balanced_accuracy": 0.5096299267206444
+    },
+    "metricas_por_clase": {
+      "0": {
+        "precision": 0.8633165829145729,
+        "recall": 0.9976771196283392,
+        "f1-score": 0.925646551724138,
+        "support": 1722
+      },
+      "1": {
+        "precision": 0.6,
+        "recall": 0.02158273381294964,
+        "f1-score": 0.04166666666666667,
+        "support": 278
+      }
+    },
+    "feature_importance": {
+      "edad": 0.06455206871032715,
+      "sexo": 0.05966092273592949,
+      "estado_civil": 0.057157982140779495,
+      "nacionalidad": 0.06214049085974693,
+      "nivel_educativo": 0.0674368143081665,
+      "ingresos_mensuales": 0.18112139403820038,
+      "ocupacion": 0.05414848029613495,
+      "nivel_riesgo_crediticio": 0.3992060422897339,
+      "tarjeta_credito": 0.05457576364278793
+    },
+    "datos_entrenamiento": {
+      "total_train": 8000,
+      "total_test": 2000,
+      "features_utilizadas": [
+        "edad",
+        "sexo",
+        "estado_civil",
+        "nacionalidad",
+        "nivel_educativo",
+        "ingresos_mensuales",
+        "ocupacion",
+        "nivel_riesgo_crediticio",
+        "tarjeta_credito"
+      ],
+      "fuga_train": 1114,
+      "fuga_test": 278,
+      "balance_train": {
+        "no_fuga": 6886,
+        "fuga": 1114
+      },
+      "balance_test": {
+        "no_fuga": 1722,
+        "fuga": 278
+      }
+    },
+    "interpretacion": {
+      "accuracy": "Buena precisión general",
+      "precision": "Muchos falsos positivos",
+      "recall": "No detecta adecuadamente los casos de fuga",
+      "f1_score": "Balance muy pobre",
+      "roc_auc": "Capacidad limitada",
+      "resumen_general": "Regular: El modelo necesita mejoras significativas."
+    }
+  }
+}

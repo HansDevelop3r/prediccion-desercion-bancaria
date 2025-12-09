@@ -90,6 +90,18 @@ export class MLService {
   }
 
   /**
+   * Analizar dataset CSV y generar métricas
+   */
+  analyzeDataset(csvFile: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('csvFile', csvFile);
+
+    return this.http.post(`${this.apiUrl}/analyze-dataset`, formData, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  /**
    * Realizar predicción individual
    */
   predictSingle(customerData: CustomerData): Observable<PredictionResult> {
