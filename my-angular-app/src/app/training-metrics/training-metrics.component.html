@@ -1,0 +1,167 @@
+<div class="metrics-container">
+  <div class="metrics-header">
+    <h1>📊 Métricas del Modelo de Predicción</h1>
+    <p class="subtitle">Resultados del entrenamiento del modelo XGBoost</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Cargando métricas del modelo...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <div class="error-icon">⚠️</div>
+    <p>{{ error }}</p>
+    <button (click)="goToTraining()" class="btn-primary">
+      Ir a Entrenar Modelo
+    </button>
+  </div>
+
+  <!-- No Model Trained -->
+  <div *ngIf="!loading && !error && !modelTrained" class="no-model-container">
+    <div class="no-model-icon">🤖</div>
+    <h2>No hay modelo entrenado</h2>
+    <p>Para ver las métricas, primero debes entrenar el modelo con un archivo CSV.</p>
+    <button (click)="goToTraining()" class="btn-primary">
+      Entrenar Modelo
+    </button>
+  </div>
+
+  <!-- Metrics Display -->
+  <div *ngIf="!loading && !error && modelTrained && metrics" class="metrics-content">
+    
+    <!-- Training Info Card -->
+    <div class="info-card" *ngIf="metrics.training_info">
+      <h3>ℹ️ Información del Entrenamiento</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Fecha:</span>
+          <span class="info-value">{{ metrics.training_info.training_date | date:'medium' }}</span>
+        </div>
+        <div class="info-item" *ngIf="metrics.training_info.csv_file">
+          <span class="info-label">Archivo CSV:</span>
+          <span class="info-value">{{ metrics.training_info.csv_file }}</span>
+        </div>
+        <div class="info-item" *ngIf="metrics.training_info.trained_by">
+          <span class="info-label">Entrenado por:</span>
+          <span class="info-value">{{ metrics.training_info.trained_by }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Metrics Cards -->
+    <div class="metrics-grid">
+      <!-- Accuracy -->
+      <div class="metric-card" [ngClass]="getMetricClass(getMetricValue('accuracy'), 'accuracy')">
+        <div class="metric-icon">🎯</div>
+        <h3>Accuracy</h3>
+        <div class="metric-value">{{ (getMetricValue('accuracy') * 100).toFixed(2) }}%</div>
+        <div class="metric-bar">
+          <div class="metric-bar-fill" [style.width]="getProgressBarWidth(getMetricValue('accuracy'))"></div>
+        </div>
+        <p class="metric-description">{{ getMetricInterpretation(getMetricValue('accuracy'), 'accuracy') }}</p>
+      </div>
+
+      <!-- Precision -->
+      <div class="metric-card" [ngClass]="getMetricClass(getMetricValue('precision'), 'precision')" *ngIf="metrics.precision !== undefined">
+        <div class="metric-icon">🔍</div>
+        <h3>Precision</h3>
+        <div class="metric-value">{{ (getMetricValue('precision') * 100).toFixed(2) }}%</div>
+        <div class="metric-bar">
+          <div class="metric-bar-fill" [style.width]="getProgressBarWidth(getMetricValue('precision'))"></div>
+        </div>
+        <p class="metric-description">{{ getMetricInterpretation(getMetricValue('precision'), 'precision') }}</p>
+      </div>
+
+      <!-- Recall -->
+      <div class="metric-card" [ngClass]="getMetricClass(getMetricValue('recall'), 'recall')" *ngIf="metrics.recall !== undefined">
+        <div class="metric-icon">📡</div>
+        <h3>Recall</h3>
+        <div class="metric-value">{{ (getMetricValue('recall') * 100).toFixed(2) }}%</div>
+        <div class="metric-bar">
+          <div class="metric-bar-fill" [style.width]="getProgressBarWidth(getMetricValue('recall'))"></div>
+        </div>
+        <p class="metric-description">{{ getMetricInterpretation(getMetricValue('recall'), 'recall') }}</p>
+      </div>
+
+      <!-- F1 Score -->
+      <div class="metric-card" [ngClass]="getMetricClass(getMetricValue('f1_score'), 'f1_score')" *ngIf="metrics.f1_score !== undefined">
+        <div class="metric-icon">⚖️</div>
+        <h3>F1-Score</h3>
+        <div class="metric-value">{{ (getMetricValue('f1_score') * 100).toFixed(2) }}%</div>
+        <div class="metric-bar">
+          <div class="metric-bar-fill" [style.width]="getProgressBarWidth(getMetricValue('f1_score'))"></div>
+        </div>
+        <p class="metric-description">{{ getMetricInterpretation(getMetricValue('f1_score'), 'f1_score') }}</p>
+      </div>
+
+      <!-- ROC-AUC -->
+      <div class="metric-card" [ngClass]="getMetricClass(getMetricValue('roc_auc'), 'roc_auc')" *ngIf="metrics.roc_auc !== undefined">
+        <div class="metric-icon">📈</div>
+        <h3>ROC-AUC</h3>
+        <div class="metric-value">{{ (getMetricValue('roc_auc') * 100).toFixed(2) }}%</div>
+        <div class="metric-bar">
+          <div class="metric-bar-fill" [style.width]="getProgressBarWidth(getMetricValue('roc_auc'))"></div>
+        </div>
+        <p class="metric-description">{{ getMetricInterpretation(getMetricValue('roc_auc'), 'roc_auc') }}</p>
+      </div>
+    </div>
+
+    <!-- Feature Importance Section -->
+    <div class="feature-importance-section" *ngIf="featureImportanceArray.length > 0">
+      <h2>🎯 Importancia de Variables</h2>
+      <p class="section-subtitle">Variables más influyentes en la predicción de deserción</p>
+      
+      <div class="features-list">
+        <div class="feature-item" *ngFor="let feature of featureImportanceArray; let i = index">
+          <div class="feature-rank">{{ i + 1 }}</div>
+          <div class="feature-info">
+            <div class="feature-name">{{ feature.name }}</div>
+            <div class="feature-bar-container">
+              <div class="feature-bar" [style.width]="feature.percentage"></div>
+            </div>
+          </div>
+          <div class="feature-percentage">{{ feature.percentage }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confusion Matrix (if available) -->
+    <div class="confusion-matrix-section" *ngIf="showDetails && metrics.confusion_matrix">
+      <h2>📊 Matriz de Confusión</h2>
+      <div class="confusion-matrix">
+        <div class="matrix-row">
+          <div class="matrix-cell header"></div>
+          <div class="matrix-cell header">Predicho: No Fuga</div>
+          <div class="matrix-cell header">Predicho: Fuga</div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-cell header">Real: No Fuga</div>
+          <div class="matrix-cell tn">{{ metrics.confusion_matrix.true_negative }}</div>
+          <div class="matrix-cell fp">{{ metrics.confusion_matrix.false_positive }}</div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-cell header">Real: Fuga</div>
+          <div class="matrix-cell fn">{{ metrics.confusion_matrix.false_negative }}</div>
+          <div class="matrix-cell tp">{{ metrics.confusion_matrix.true_positive }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="actions-container">
+      <button (click)="toggleDetails()" class="btn-secondary">
+        {{ showDetails ? 'Ocultar Detalles' : 'Ver Más Detalles' }}
+      </button>
+      <button (click)="refreshMetrics()" class="btn-secondary">
+        🔄 Actualizar Métricas
+      </button>
+      <button (click)="goToTraining()" class="btn-primary">
+        🚀 Entrenar Nuevo Modelo
+      </button>
+    </div>
+
+  </div>
+</div>

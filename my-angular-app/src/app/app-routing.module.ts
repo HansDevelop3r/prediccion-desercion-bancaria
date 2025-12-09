@@ -7,11 +7,13 @@ import { AuthGuard } from './auth.guard';
 
 import { UsuariosComponent } from './usuarios/usuarios.component';
 import { ReporteComponent } from './reporte/reporte.component';
+import { TrainingMetricsComponent } from './training-metrics/training-metrics.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
   // { path: 'upload', component: UploadComponent, canActivate: [AuthGuard] }, // Ruta deshabilitada
   { path: 'ml-prediction', component: MLPredictionComponent, canActivate: [AuthGuard] },
+  { path: 'training-metrics', component: TrainingMetricsComponent, canActivate: [AuthGuard] },
   { path: 'usuarios', component: UsuariosComponent, canActivate: [AuthGuard] },
   { path: 'reporte', component: ReporteComponent, canActivate: [AuthGuard] }
 ];

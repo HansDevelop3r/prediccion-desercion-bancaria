@@ -263,6 +263,43 @@
   color: #2c3e50;
 }
 
+/* Metrics Link Container */
+.metrics-link-container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 25px;
+  border-radius: 12px;
+  margin: 25px 0;
+  text-align: center;
+}
+
+.btn-view-metrics {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.btn-view-metrics:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  background: #f8f9fa;
+}
+
+.metrics-hint {
+  color: white;
+  font-size: 0.9rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
 .prediction-positive {
   color: #e74c3c;
   font-weight: 600;

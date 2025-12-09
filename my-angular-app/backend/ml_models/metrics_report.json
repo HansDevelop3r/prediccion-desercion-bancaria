@@ -28,7 +28,7 @@
       "f1-score": 0.0
     }
   },
-  "training_time": 0.11758589744567871,
+  "training_time": 0.21976375579833984,
   "data_size": 1000,
   "test_size": 200,
   "feature_importance": {

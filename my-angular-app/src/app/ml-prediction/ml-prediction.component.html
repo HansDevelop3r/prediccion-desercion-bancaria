@@ -338,7 +338,7 @@
 
       <!-- Resultado del entrenamiento -->
       <div *ngIf="trainingResult" class="training-result">
-        <h3>Resultado del Entrenamiento</h3>
+        <h3>✅ Resultado del Entrenamiento</h3>
         <div class="result-card">
           <div class="result-item">
             <span class="result-label">Precisión del Modelo:</span>
@@ -348,6 +348,14 @@
             <span class="result-label">Fecha de Entrenamiento:</span>
             <span class="result-value">{{ formatDate(trainingResult.training_date) }}</span>
           </div>
+        </div>
+        
+        <!-- Botón para ver métricas detalladas -->
+        <div class="metrics-link-container">
+          <button class="btn-view-metrics" routerLink="/training-metrics">
+            📊 Ver Métricas Detalladas del Modelo
+          </button>
+          <p class="metrics-hint">Haz clic para ver accuracy, precision, recall, F1-score, ROC-AUC y más</p>
         </div>
         
         <div class="feature-importance">

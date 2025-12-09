@@ -9,13 +9,15 @@ import { ReporteComponent } from './reporte/reporte.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NgChartsModule } from 'ng2-charts';
 import { UsuariosModule } from './usuarios/usuarios.module';
+import { TrainingMetricsComponent } from './training-metrics/training-metrics.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     MLPredictionComponent,
-    ReporteComponent
+    ReporteComponent,
+    TrainingMetricsComponent
   ],
   imports: [
     BrowserModule,
