@@ -887,8 +887,50 @@ app.post('/api/ml/train', verifyToken, upload.single('csvFile'), async (req, res
 
         // Guardar métricas detalladas en tabla metricas_entrenamiento
         try {
+          console.log('📊 [METRICAS] Guardando métricas en base de datos...');
           const confusion = trainingResults.confusion_matrix || {};
-          await pool.execute(
+          const additionalMetrics = trainingResults.additional_metrics || {};
+          
+          const metricsValues = [
+            new Date(),
+            req.file.originalname,
+            req.user.username,
+            trainingResults.accuracy !== undefined ? trainingResults.accuracy : 0,
+            trainingResults.precision !== undefined ? trainingResults.precision : null,
+            trainingResults.recall !== undefined ? trainingResults.recall : null,
+            trainingResults.f1_score !== undefined ? trainingResults.f1_score : null,
+            trainingResults.roc_auc !== undefined ? trainingResults.roc_auc : null,
+            confusion.true_positive !== undefined ? confusion.true_positive : null,
+            confusion.true_negative !== undefined ? confusion.true_negative : null,
+            confusion.false_positive !== undefined ? confusion.false_positive : null,
+            confusion.false_negative !== undefined ? confusion.false_negative : null,
+            trainingResults.data_size || recordCount,
+            trainingResults.training_samples || null,
+            trainingResults.test_samples !== undefined ? trainingResults.test_samples : (trainingResults.test_size || null),
+            trainingResults.churn_rate || null,
+            JSON.stringify(trainingResults.feature_importance || {}),
+            additionalMetrics.specificity !== undefined ? additionalMetrics.specificity : null,
+            trainingResults.balanced_accuracy || null,
+            'XGBoost',
+            Math.round(trainingResults.training_time || 0)
+          ];
+
+          console.log('📊 [METRICAS] Valores a insertar:', {
+            accuracy: metricsValues[3],
+            precision: metricsValues[4],
+            recall: metricsValues[5],
+            f1_score: metricsValues[6],
+            roc_auc: metricsValues[7],
+            confusion_matrix: {
+              tp: metricsValues[8],
+              tn: metricsValues[9],
+              fp: metricsValues[10],
+              fn: metricsValues[11]
+            },
+            archivo: metricsValues[1]
+          });
+
+          const [result] = await pool.execute(
             `INSERT INTO metricas_entrenamiento (
               fecha_entrenamiento,
               nombre_archivo_csv,
@@ -912,33 +954,16 @@ app.post('/api/ml/train', verifyToken, upload.single('csvFile'), async (req, res
               modelo_tipo,
               tiempo_entrenamiento_segundos
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-              new Date(),
-              req.file.originalname,
-              req.user.username,
-              trainingResults.accuracy || 0,
-              trainingResults.precision || null,
-              trainingResults.recall || null,
-              trainingResults.f1_score || null,
-              trainingResults.roc_auc || null,
-              confusion.true_positive || null,
-              confusion.true_negative || null,
-              confusion.false_positive || null,
-              confusion.false_negative || null,
-              trainingResults.data_size || recordCount,
-              trainingResults.training_samples || null,
-              trainingResults.test_samples || null,
-              trainingResults.churn_rate || null,
-              JSON.stringify(trainingResults.feature_importance || {}),
-              trainingResults.specificity || null,
-              trainingResults.balanced_accuracy || null,
-              'XGBoost',
-              Math.round(trainingResults.training_time || 0)
-            ]
+            metricsValues
           );
-          console.log('✅ Métricas detalladas guardadas en tabla metricas_entrenamiento');
+          
+          console.log('✅ [METRICAS] Métricas guardadas exitosamente. ID:', result.insertId);
         } catch (dbError) {
-          console.error('⚠️ Error al guardar métricas detalladas en BD:', dbError.message);
+          console.error('❌ [METRICAS] Error al guardar métricas en BD:');
+          console.error('   Mensaje:', dbError.message);
+          console.error('   Código:', dbError.code);
+          console.error('   SQL State:', dbError.sqlState);
+          if (dbError.sql) console.error('   SQL:', dbError.sql);
           // No fallar el proceso si hay error en esta inserción
         }
 
