@@ -1,45 +1,45 @@
 {
-  "accuracy": 0.79,
-  "precision": 0.0,
-  "recall": 0.0,
-  "f1_score": 0.0,
-  "roc_auc": 0.692284508740205,
+  "accuracy": 0.855,
+  "precision": 0.6363636363636364,
+  "recall": 0.0472972972972973,
+  "f1_score": 0.08805031446540881,
+  "roc_auc": 0.703947785813983,
   "confusion_matrix": {
-    "true_negative": 158,
-    "false_positive": 0,
-    "false_negative": 42,
-    "true_positive": 0
+    "true_negative": 848,
+    "false_positive": 4,
+    "false_negative": 141,
+    "true_positive": 7
   },
   "additional_metrics": {
-    "specificity": 1.0,
-    "sensitivity": 0.0,
-    "false_positive_rate": 0.0,
-    "false_negative_rate": 1.0
+    "specificity": 0.9953051643192489,
+    "sensitivity": 0.0472972972972973,
+    "false_positive_rate": 0.004694835680751174,
+    "false_negative_rate": 0.9527027027027027
   },
   "classification_report": {
     "0": {
-      "precision": 0.79,
-      "recall": 1.0,
-      "f1-score": 0.8826815642458101
+      "precision": 0.8574317492416582,
+      "recall": 0.9953051643192489,
+      "f1-score": 0.9212384573601304
     },
     "1": {
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1-score": 0.0
+      "precision": 0.6363636363636364,
+      "recall": 0.0472972972972973,
+      "f1-score": 0.08805031446540881
     }
   },
-  "training_time": 0.21976375579833984,
-  "data_size": 1000,
-  "test_size": 200,
+  "training_time": 0.13335299491882324,
+  "data_size": 5000,
+  "test_size": 1000,
   "feature_importance": {
-    "edad": 0.10478058457374573,
-    "sexo": 0.07928348332643509,
-    "estado_civil": 0.0836687982082367,
-    "nacionalidad": 0.11927545070648193,
-    "nivel_educativo": 0.09574324637651443,
-    "ingresos_mensuales": 0.12758219242095947,
-    "ocupacion": 0.06769482046365738,
-    "nivel_riesgo_crediticio": 0.20389652252197266,
-    "tarjeta_credito": 0.1180749163031578
+    "edad": 0.07139783352613449,
+    "sexo": 0.12171456217765808,
+    "estado_civil": 0.07223313301801682,
+    "nacionalidad": 0.07163390517234802,
+    "nivel_educativo": 0.05633128061890602,
+    "ingresos_mensuales": 0.17442220449447632,
+    "ocupacion": 0.05752590671181679,
+    "nivel_riesgo_crediticio": 0.29744601249694824,
+    "tarjeta_credito": 0.0772951990365982
   }
 }

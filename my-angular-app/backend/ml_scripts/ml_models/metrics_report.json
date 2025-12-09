@@ -1,45 +1,45 @@
 {
-  "accuracy": 0.856,
-  "precision": 0.5,
-  "recall": 0.027777777777777776,
-  "f1_score": 0.05263157894736842,
-  "roc_auc": 0.7062646028037383,
+  "accuracy": 0.855,
+  "precision": 0.6363636363636364,
+  "recall": 0.0472972972972973,
+  "f1_score": 0.08805031446540881,
+  "roc_auc": 0.703947785813983,
   "confusion_matrix": {
-    "true_negative": 1704,
-    "false_positive": 8,
-    "false_negative": 280,
-    "true_positive": 8
+    "true_negative": 848,
+    "false_positive": 4,
+    "false_negative": 141,
+    "true_positive": 7
   },
   "additional_metrics": {
-    "specificity": 0.9953271028037384,
-    "sensitivity": 0.027777777777777776,
-    "false_positive_rate": 0.004672897196261682,
-    "false_negative_rate": 0.9722222222222222
+    "specificity": 0.9953051643192489,
+    "sensitivity": 0.0472972972972973,
+    "false_positive_rate": 0.004694835680751174,
+    "false_negative_rate": 0.9527027027027027
   },
   "classification_report": {
     "0": {
-      "precision": 0.8588709677419355,
-      "recall": 0.9953271028037384,
-      "f1-score": 0.922077922077922
+      "precision": 0.8574317492416582,
+      "recall": 0.9953051643192489,
+      "f1-score": 0.9212384573601304
     },
     "1": {
-      "precision": 0.5,
-      "recall": 0.027777777777777776,
-      "f1-score": 0.05263157894736842
+      "precision": 0.6363636363636364,
+      "recall": 0.0472972972972973,
+      "f1-score": 0.08805031446540881
     }
   },
-  "training_time": 0.37389492988586426,
-  "data_size": 10000,
-  "test_size": 2000,
+  "training_time": 0.13335299491882324,
+  "data_size": 5000,
+  "test_size": 1000,
   "feature_importance": {
-    "edad": 0.052271295338869095,
-    "sexo": 0.07719530165195465,
-    "estado_civil": 0.043542180210351944,
-    "nacionalidad": 0.06165296211838722,
-    "nivel_educativo": 0.0532129667699337,
-    "ingresos_mensuales": 0.2122640460729599,
-    "ocupacion": 0.05041735991835594,
-    "nivel_riesgo_crediticio": 0.36362820863723755,
-    "tarjeta_credito": 0.08581563085317612
+    "edad": 0.07139783352613449,
+    "sexo": 0.12171456217765808,
+    "estado_civil": 0.07223313301801682,
+    "nacionalidad": 0.07163390517234802,
+    "nivel_educativo": 0.05633128061890602,
+    "ingresos_mensuales": 0.17442220449447632,
+    "ocupacion": 0.05752590671181679,
+    "nivel_riesgo_crediticio": 0.29744601249694824,
+    "tarjeta_credito": 0.0772951990365982
   }
 }

@@ -885,6 +885,63 @@ app.post('/api/ml/train', verifyToken, upload.single('csvFile'), async (req, res
           console.error('⚠️ Error al registrar estado del modelo en BD:', dbError);
         }
 
+        // Guardar métricas detalladas en tabla metricas_entrenamiento
+        try {
+          const confusion = trainingResults.confusion_matrix || {};
+          await pool.execute(
+            `INSERT INTO metricas_entrenamiento (
+              fecha_entrenamiento,
+              nombre_archivo_csv,
+              usuario_entrenamiento,
+              accuracy,
+              precision_score,
+              recall_score,
+              f1_score,
+              roc_auc,
+              true_positive,
+              true_negative,
+              false_positive,
+              false_negative,
+              total_registros,
+              registros_entrenamiento,
+              registros_prueba,
+              porcentaje_fuga,
+              feature_importance,
+              specificity,
+              balanced_accuracy,
+              modelo_tipo,
+              tiempo_entrenamiento_segundos
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              new Date(),
+              req.file.originalname,
+              req.user.username,
+              trainingResults.accuracy || 0,
+              trainingResults.precision || null,
+              trainingResults.recall || null,
+              trainingResults.f1_score || null,
+              trainingResults.roc_auc || null,
+              confusion.true_positive || null,
+              confusion.true_negative || null,
+              confusion.false_positive || null,
+              confusion.false_negative || null,
+              trainingResults.data_size || recordCount,
+              trainingResults.training_samples || null,
+              trainingResults.test_samples || null,
+              trainingResults.churn_rate || null,
+              JSON.stringify(trainingResults.feature_importance || {}),
+              trainingResults.specificity || null,
+              trainingResults.balanced_accuracy || null,
+              'XGBoost',
+              Math.round(trainingResults.training_time || 0)
+            ]
+          );
+          console.log('✅ Métricas detalladas guardadas en tabla metricas_entrenamiento');
+        } catch (dbError) {
+          console.error('⚠️ Error al guardar métricas detalladas en BD:', dbError.message);
+          // No fallar el proceso si hay error en esta inserción
+        }
+
         // Registrar archivo en tabla archivos_cargados
         try {
           await pool.execute(
@@ -1212,6 +1269,125 @@ app.get('/api/ml/sample-data', verifyToken, async (req, res) => {
     console.error('❌ Error obteniendo datos de muestra:', error);
     res.status(500).json({ 
       message: 'Error obteniendo datos de muestra',
+      error: error.message 
+    });
+  }
+});
+
+// Obtener historial de métricas de entrenamiento
+app.get('/api/ml/training-metrics/history', verifyToken, async (req, res) => {
+  try {
+    const { limit = 10 } = req.query;
+    
+    // Obtener historial de métricas
+    const [metrics] = await pool.execute(
+      `SELECT 
+        id,
+        fecha_entrenamiento,
+        nombre_archivo_csv,
+        usuario_entrenamiento,
+        accuracy,
+        precision_score,
+        recall_score,
+        f1_score,
+        roc_auc,
+        true_positive,
+        true_negative,
+        false_positive,
+        false_negative,
+        total_registros,
+        registros_entrenamiento,
+        registros_prueba,
+        porcentaje_fuga,
+        feature_importance,
+        specificity,
+        balanced_accuracy,
+        modelo_tipo,
+        tiempo_entrenamiento_segundos
+      FROM metricas_entrenamiento
+      ORDER BY fecha_entrenamiento DESC
+      LIMIT ?`,
+      [parseInt(limit)]
+    );
+
+    // Parsear JSON de feature_importance
+    const formattedMetrics = metrics.map(m => ({
+      ...m,
+      feature_importance: typeof m.feature_importance === 'string' 
+        ? JSON.parse(m.feature_importance) 
+        : m.feature_importance
+    }));
+
+    res.json({
+      success: true,
+      count: formattedMetrics.length,
+      metrics: formattedMetrics
+    });
+
+  } catch (error) {
+    console.error('❌ Error obteniendo historial de métricas:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Error obteniendo historial de métricas',
+      error: error.message 
+    });
+  }
+});
+
+// Obtener estadísticas generales de entrenamientos
+app.get('/api/ml/training-metrics/stats', verifyToken, async (req, res) => {
+  try {
+    // Estadísticas generales
+    const [stats] = await pool.execute(
+      `SELECT 
+        COUNT(*) as total_entrenamientos,
+        AVG(accuracy) as accuracy_promedio,
+        MAX(accuracy) as mejor_accuracy,
+        MIN(accuracy) as peor_accuracy,
+        AVG(f1_score) as f1_promedio,
+        AVG(total_registros) as registros_promedio,
+        SUM(tiempo_entrenamiento_segundos) as tiempo_total_segundos
+      FROM metricas_entrenamiento`
+    );
+
+    // Mejor modelo
+    const [bestModel] = await pool.execute(
+      `SELECT 
+        id,
+        fecha_entrenamiento,
+        nombre_archivo_csv,
+        usuario_entrenamiento,
+        accuracy,
+        f1_score,
+        roc_auc
+      FROM metricas_entrenamiento
+      ORDER BY accuracy DESC
+      LIMIT 1`
+    );
+
+    // Entrenamientos por usuario
+    const [byUser] = await pool.execute(
+      `SELECT 
+        usuario_entrenamiento,
+        COUNT(*) as total_entrenamientos,
+        AVG(accuracy) as accuracy_promedio
+      FROM metricas_entrenamiento
+      GROUP BY usuario_entrenamiento
+      ORDER BY total_entrenamientos DESC`
+    );
+
+    res.json({
+      success: true,
+      statistics: stats[0] || {},
+      best_model: bestModel[0] || null,
+      by_user: byUser
+    });
+
+  } catch (error) {
+    console.error('❌ Error obteniendo estadísticas de métricas:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Error obteniendo estadísticas',
       error: error.message 
     });
   }
